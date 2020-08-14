@@ -4,6 +4,7 @@ import common.money.MonetaryAmount;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -24,7 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 // - Run the test, it should now pass.
 // - Think about where auto-configuration is enabled for the test.
 @ExtendWith(SpringExtension.class)                      // Replace me
-@ContextConfiguration(classes = {SystemTestConfig.class}) // Replace me
+//@ContextConfiguration(classes = {SystemTestConfig.class}) // Replace me
+@SpringBootTest
+//@SpringBootTest(classes={SystemTestConfig.class})
 public class RewardNetworkTests {
 
     /**

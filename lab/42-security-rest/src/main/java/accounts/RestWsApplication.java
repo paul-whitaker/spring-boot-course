@@ -1,8 +1,10 @@
 package accounts;
 
+import config.SecurityConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Import;
 
 // TODO-01: Verify the presence of Spring security dependencies
 // - See TO-DO-01 in the pom.xml for Maven or build.gradle for Gradle
@@ -29,7 +31,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 @SpringBootApplication
 // TODO-03: Import security configuration class
 // - Uncomment the line below and go to SecurityConfig class
-//@Import(SecurityConfig.class)
+@Import(SecurityConfig.class)
 @EntityScan("rewards.internal")
 public class RestWsApplication {
 

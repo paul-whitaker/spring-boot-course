@@ -21,6 +21,7 @@ public class SystemTestConfig {
 	// TODO-04 : Use Spring Boot auto-configuration for DataSource
 	// - Comment out the @Bean method below so this method is no longer called
 
+	/*
 	@Bean
 	public DataSource dataSource() {
 		logger.debug("Creating the datasource bean explicitly");
@@ -31,5 +32,5 @@ public class SystemTestConfig {
 			.addScript("classpath:rewards/testdb/data.sql")
 			.build();
 	}
-	
+*/
 }

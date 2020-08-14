@@ -1,9 +1,11 @@
 package config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -21,13 +23,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 // - Make sure "prePostEnabled" attribute is set to true
 
 @Configuration
-@EnableWebSecurity      // Redundant in Spring Boot app
+@EnableWebSecurity  // Redundant in Spring Boot app
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.authorizeRequests()
                 // TODO-04: Configure authorization using mvcMatchers method
                 // - Allow DELETE on the /accounts resource (or any sub-resource)
                 //   for "SUPERADMIN" role only
@@ -35,13 +37,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //   for "ADMIN" or "SUPERADMIN" role only
                 // - Allow GET on the /accounts resource (or any sub-resource)
                 //   for all roles - "USER", "ADMIN", "SUPERADMIN"
-
-                // For all other URL's, make sure the caller is authenticated
+        http.authorizeRequests()
+                .mvcMatchers(HttpMethod.GET, "/accounts/**").hasAnyRole("USER", "ADMIN", "SUPERADMIN")
+                .mvcMatchers(HttpMethod.PUT, "/accounts/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                .mvcMatchers(HttpMethod.POST, "/accounts/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                .mvcMatchers(HttpMethod.DELETE, "/accounts/**").hasAnyRole("SUPERADMIN")
                 .mvcMatchers("/**").authenticated()
                 .and()
-            .httpBasic()
+                .httpBasic()
                 .and()
-            .csrf().disable();
+                .csrf().disable();
+
     }
 
     @Override
@@ -55,17 +61,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // - "superadmin"/"superadmin" with "USER", "ADMIN", and "SUPERADMIN" roles
         // (Make sure to store the password in encoded form.)
         auth.inMemoryAuthentication()
-            .withUser("user").password(passwordEncoder.encode("user")).roles("USER").and()
-
-        ;
+                .withUser("user").password(passwordEncoder.encode("user")).roles("USER").and()
+                .withUser("admin").password(passwordEncoder.encode("admin")).roles("USER", "ADMIN").and()
+                .withUser("superadmin").password(passwordEncoder.encode("superadmin")).roles("USER", "ADMIN", "SUPERADMIN");
 
         // TODO-14 (Optional): Add authentication based upon the custom UserDetailsService
         // - Uncomment the line below and finish up the code
         //auth.
+        auth.userDetailsService(new CustomUserDetailsService(passwordEncoder));
 
         // TODO-18 (Optional): Add authentication based upon the custom AuthenticationProvider
         // - Uncomment the line below and finish up the code
         //auth.
+        auth.authenticationProvider(new CustomAuthenticationProvider());
     }
 
 }

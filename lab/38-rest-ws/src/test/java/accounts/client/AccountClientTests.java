@@ -22,14 +22,14 @@ public class AccountClientTests {
 	private Random random = new Random();
 	
 	@Test
-	@Disabled
+	//@Disabled
 	public void listAccounts() {
 		// TODO-03: Remove the @Disabled on this test method.
 		// - Use the restTemplate to retrieve an array containing all Account instances.
 		// - Use BASE_URL to help define the URL you need: BASE_URL + "/..."
 		// - Run the test and ensure that it passes.
 		Account[] accounts = null; // Modify this line to use the restTemplate
-		
+		accounts = restTemplate.getForObject(BASE_URL + "/accounts", Account[].class);
 		assertNotNull(accounts);
 		assertTrue(accounts.length >= 21);
 		assertEquals("Keith and Keri Donald", accounts[0].getName());
@@ -38,13 +38,13 @@ public class AccountClientTests {
 	}
 	
 	@Test
-	@Disabled
+	//@Disabled
 	public void getAccount() {
 		// TODO-05: Remove the @Disabled on this test method.
 		// - Use the restTemplate to retrieve the Account with id 0 using a URI template
 		// - Run the test and ensure that it passes.
 		Account account = null; // Modify this line to use the restTemplate
-		
+		account = restTemplate.getForObject(BASE_URL + "/accounts/0", Account.class);
 		assertNotNull(account);
 		assertEquals("Keith and Keri Donald", account.getName());
 		assertEquals(2, account.getBeneficiaries().size());
@@ -52,7 +52,7 @@ public class AccountClientTests {
 	}
 	
 	@Test
-	@Disabled
+	//@Disabled
 	public void createAccount() {
 		// use a unique number to avoid conflicts
 		String number = String.format("12345%4d", random.nextInt(10000));
@@ -66,11 +66,12 @@ public class AccountClientTests {
 		//  - Use the one that returns the location of the newly created
 		//    resource and assign that to a variable.
 		URI newAccountLocation = null; // Modify this line to use the restTemplate
-
+		newAccountLocation = restTemplate.postForLocation(BASE_URL + "/accounts", account);
 		//	TODO-09: Retrieve the Account you just created from
 		//	         the location that was returned.
 		//	- Run this test.
 		Account retrievedAccount = null; // Modify this line to use the restTemplate
+		retrievedAccount = restTemplate.getForObject(newAccountLocation, Account.class);
 		
 		assertEquals(account.getNumber(), retrievedAccount.getNumber());
 		
